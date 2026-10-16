@@ -13,6 +13,9 @@
     "install": "cd backend && npm install && cd ../client && npm install",
     "dev:server": "cd backend && npm run dev",
     "dev:client": "cd client && npm run dev",
+    "start": "cd backend && npm start",
+    "start:client": "npm --prefix client run dev",
+    "start:backend": "npm --prefix backend run dev",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "build": "cd client && npm run build"
   },
