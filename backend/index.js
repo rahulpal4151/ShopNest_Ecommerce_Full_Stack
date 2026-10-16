@@ -17,6 +17,28 @@ app.use(express.json())
 
 app.use(express.urlencoded({extended:true}))
 
+
+
+const frontendDistPath = resolve(dirname(fileURLToPath(import.meta.url)), '../frontend/dist');
+const frontendIndexPath = resolve(frontendDistPath, 'index.html');
+
+
+app.use('/api', (req, res) => {
+    res.status(404).json({ message: 'API route not found' });
+});
+
+
+if (existsSync(frontendIndexPath)) {
+    app.use(express.static(frontendDistPath));
+    app.use((req, res, next) => {
+        if (req.method !== 'GET' || req.path.startsWith('/api/')) {
+            return next();
+        }
+
+        res.sendFile(frontendIndexPath);
+    });
+}
+
 app.get("/", (req, res)=>{
     res.send("ShopNest Backend is working");
 });
