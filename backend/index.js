@@ -1,43 +1,47 @@
+const path = require('path');
+const { existsSync } = require('fs');
+
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const dns = require("dns");
-dns.setServers(["8.8.8.8", "8.8.4.4"]);
+const dns = require('dns');
+dns.setServers(['8.8.8.8', '8.8.4.4']);
 const connectdb = require('./config/db');
-const authRoute = require('./routes/authRoutes.js')
+const authRoute = require('./routes/authRoutes.js');
+
 dotenv.config();
-const app = express();
-app.use(cors({
-    origin:'http://localhost:3000',
-    credentials:true,
-    methods:['GET', 'PUT', 'DELETE', 'POST'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}))
-app.use(express.json())
-
-app.use(express.urlencoded({extended:true}))
-
-
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../frontend/build')));
-  
-  app.use((req, res) => {
-    res.sendFile(path.resolve(__dirname, '../frontend/build/index.html'));
-  });
-} else {
-  app.get('/', (req, res) => {
-    res.send('ShopNest API is running in Development mode...');
-  });
+if (process.env.NODE_ENV !== 'production') {
+    process.env.NODE_ENV = 'development';
 }
 
-const frontendDistPath = resolve(dirname(fileURLToPath(import.meta.url)), '../frontend/dist');
-const frontendIndexPath = resolve(frontendDistPath, 'index.html');
+const app = express();
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+    methods: ['GET', 'PUT', 'DELETE', 'POST'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../frontend/build')));
+
+    app.use((req, res) => {
+        res.sendFile(path.resolve(__dirname, '../frontend/build/index.html'));
+    });
+} else {
+    app.get('/', (req, res) => {
+        res.send('ShopNest API is running in Development mode...');
+    });
+}
+
+const frontendDistPath = path.resolve(__dirname, '../frontend/dist');
+const frontendIndexPath = path.resolve(frontendDistPath, 'index.html');
 
 app.use('/api', (req, res) => {
     res.status(404).json({ message: 'API route not found' });
 });
-
 
 if (existsSync(frontendIndexPath)) {
     app.use(express.static(frontendDistPath));
@@ -50,8 +54,8 @@ if (existsSync(frontendIndexPath)) {
     });
 }
 
-app.get("/", (req, res)=>{
-    res.send("ShopNest Backend is working");
+app.get('/', (req, res) => {
+    res.send('ShopNest Backend is working');
 });
 
 app.use('/api/auth', authRoute);
