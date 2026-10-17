@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useContext, useEffect, useState } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../redux/cartSlice';
+import { AuthContext } from '../context/AuthContext';
 import { ShoppingBag, ChevronRight, Loader2, AlertCircle } from 'lucide-react';
 
 const ProductDetail = () => {
@@ -9,6 +10,8 @@ const ProductDetail = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -33,6 +36,12 @@ const ProductDetail = () => {
   }, [id]);
 
   const handleAddToCart = () => {
+    if (!user?.token) {
+      alert('Please login to add products to your cart.');
+      navigate('/login', { state: { from: `/products/${id}` } });
+      return;
+    }
+
     if (product) {
       dispatch(addToCart({
         productId: product._id,
