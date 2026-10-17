@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 
@@ -8,6 +8,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,7 +21,7 @@ const Login = () => {
       const data = await res.json();
       if (res.ok) {
         login(data);
-        navigate('/');
+        navigate(location.state?.from || '/');
       } else {
         alert(data.message);
       }
