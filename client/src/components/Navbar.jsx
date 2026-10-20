@@ -3,7 +3,7 @@ import { Link, NavLink } from 'react-router-dom'
 import logo from '../assets/Logo.png'
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Moon, ShoppingCart, Sun } from 'lucide-react'
 
 const Navbar = ({ theme, onToggleTheme }) => {

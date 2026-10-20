@@ -1,7 +1,8 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
-
+const dns = require('dns');
+dns.setServers(['8.8.8.8', '8.8.4.4']);
 const connectdb = require('./config/db');
 const authRoute = require('./routes/authRoutes.js')
 

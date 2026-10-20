@@ -1,4 +1,6 @@
 import React, { createContext, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { deactivateCart, getCartForUser, setCartForUser } from '../redux/cartSlice';
 
 export const AuthContext = createContext();
 /*
@@ -11,6 +13,7 @@ Iska use karke koi bhi child component (useContext(AuthContext) ke through) user
 
 export const AuthProvider = ({ children }) => {
 
+  const dispatch = useDispatch();
   const [user, setUser] = useState(
     localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null
   );
@@ -27,6 +30,10 @@ export const AuthProvider = ({ children }) => {
   const login = (userData) => {
     setUser(userData);
     localStorage.setItem('userInfo', JSON.stringify(userData));
+    dispatch(setCartForUser({
+      userId: userData?._id,
+      cartItems: getCartForUser(userData?._id),
+    }));
   };
 /*
 3. Login Functionality
@@ -37,6 +44,7 @@ localStorage.setItem('userInfo', JSON.stringify(userData)); — User object ko s
 */
 
   const logout = () => {
+    dispatch(deactivateCart());
     setUser(null);
     localStorage.removeItem('userInfo');
   };
